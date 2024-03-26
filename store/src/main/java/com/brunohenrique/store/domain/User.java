@@ -1,10 +1,8 @@
 package com.brunohenrique.store.domain;
 
+import com.brunohenrique.store.dtos.RequestUser;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @EqualsAndHashCode(of = "id")
 @Entity(name="users")
@@ -12,6 +10,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
+@NoArgsConstructor
 public class User {
     @Id @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
@@ -25,4 +24,11 @@ public class User {
 
     @Column(unique = true)
     private String document;
+
+    public User(RequestUser requestUser){
+        this.name = requestUser.name();
+        this.email = requestUser.email();
+        this.password = requestUser.password();
+        this.document = requestUser.document();
+    }
 }
