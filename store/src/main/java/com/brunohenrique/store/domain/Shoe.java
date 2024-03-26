@@ -1,5 +1,6 @@
 package com.brunohenrique.store.domain;
 
+import com.brunohenrique.store.dtos.RequestShoe;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -12,7 +13,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
-public class Shoes {
+public class Shoe {
     @Id @GeneratedValue(strategy = GenerationType.UUID)
     private Long id;
 
@@ -21,4 +22,10 @@ public class Shoes {
     private String description;
 
     private Double price;
+
+    public Shoe(RequestShoe requestShoe){
+        this.name = requestShoe.name();
+        this.description = requestShoe.description();
+        this.price = requestShoe.price();
+    }
 }
