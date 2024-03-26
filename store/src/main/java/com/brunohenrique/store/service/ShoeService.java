@@ -13,7 +13,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-public class ShoesService {
+public class ShoeService {
     @Autowired
     ShoeRepository shoeRepository;
 
@@ -47,6 +47,5 @@ public class ShoesService {
         }
     }
 
-    public void delete(String id){
-        shoeRepository.deleteById(id);}
+    public void delete(String id){shoeRepository.deleteById(id);}
 }

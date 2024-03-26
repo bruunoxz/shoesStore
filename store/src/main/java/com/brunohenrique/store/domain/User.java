@@ -2,6 +2,7 @@ package com.brunohenrique.store.domain;
 
 import com.brunohenrique.store.dtos.RequestUser;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 @EqualsAndHashCode(of = "id")
@@ -17,9 +18,10 @@ public class User {
 
     private String name;
 
-    @Column(unique = true)
+    @Column(unique = true) @NotNull
     private String email;
 
+    @NotNull
     private String password;
 
     @Column(unique = true)

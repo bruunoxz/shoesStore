@@ -2,10 +2,8 @@ package com.brunohenrique.store.domain;
 
 import com.brunohenrique.store.dtos.RequestShoe;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
+import jakarta.validation.constraints.NotNull;
+import lombok.*;
 
 @Entity(name = "shoes")
 @Table(name = "shoes")
@@ -13,14 +11,18 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
+@NoArgsConstructor
 public class Shoe {
     @Id @GeneratedValue(strategy = GenerationType.UUID)
-    private Long id;
+    private String id;
 
+    @NotNull
     private String name;
 
+    @Column(length = 1000)
     private String description;
 
+    @NotNull
     private Double price;
 
     public Shoe(RequestShoe requestShoe){
