@@ -22,6 +22,8 @@ public class Shoe {
     @Column(length = 1000)
     private String description;
 
+    private String brand;
+
     @NotNull
     private Double price;
 

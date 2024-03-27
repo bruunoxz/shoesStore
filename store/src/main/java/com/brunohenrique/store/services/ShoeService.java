@@ -1,9 +1,10 @@
-package com.brunohenrique.store.service;
+package com.brunohenrique.store.services;
 
 import com.brunohenrique.store.domain.Shoe;
 import com.brunohenrique.store.dtos.RequestShoe;
-import com.brunohenrique.store.repository.ShoeRepository;
-import jakarta.persistence.EntityNotFoundException;
+import com.brunohenrique.store.exceptions.DataAlreadyRegistered;
+import com.brunohenrique.store.exceptions.DataNotFoundException;
+import com.brunohenrique.store.repositories.ShoeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,22 +30,22 @@ public class ShoeService {
     }
 
     public void createShoe(RequestShoe data){
+        if(shoeRepository.findByName(data.name()).isPresent()){
+            throw new DataAlreadyRegistered("Calçado já registrado");
+        }
         Shoe newShoe = new Shoe(data);
         shoeRepository.save(newShoe);
     }
 
     public Shoe update(RequestShoe data){
-        Optional<Shoe> optionalShoe = shoeRepository.findById(data.id());
-        if(optionalShoe.isPresent()){
-            Shoe newShoe = optionalShoe.get();
-            newShoe.setName(data.name());
-            newShoe.setDescription(data.description());
-            newShoe.setPrice(data.price());
-            shoeRepository.save(newShoe);
-            return newShoe;
-        }else{
-            throw new EntityNotFoundException();
-        }
+        return shoeRepository.findById(data.id()).
+                map(shoe -> {
+                    shoe.setName(data.name());
+                    shoe.setDescription(data.description());
+                    shoe.setBrand(data.brand());
+                    shoe.setPrice(data.price());
+                    return shoeRepository.save(shoe);
+                }).orElseThrow(()->new DataNotFoundException("Calçado não encontrado"));
     }
 
     public void delete(String id){shoeRepository.deleteById(id);}

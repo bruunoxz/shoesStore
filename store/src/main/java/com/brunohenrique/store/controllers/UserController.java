@@ -1,8 +1,8 @@
-package com.brunohenrique.store.controller;
+package com.brunohenrique.store.controllers;
 
 import com.brunohenrique.store.domain.User;
 import com.brunohenrique.store.dtos.RequestUser;
-import com.brunohenrique.store.service.UserService;
+import com.brunohenrique.store.services.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +21,7 @@ public class UserController {
     public ResponseEntity<List<User>> getAllUsers(){return ResponseEntity.ok(userService.listAllUsers());}
 
     @GetMapping("/{id}")
-    public ResponseEntity<Optional<User>> getUserById(@PathVariable String id){return ResponseEntity.ok(userService.listUserById(id));}
+    public ResponseEntity<User> getUserById(@PathVariable String id){return ResponseEntity.ok(userService.listUserById(id));}
 
     @PostMapping
     public ResponseEntity registerUser(@RequestBody @Valid RequestUser data){

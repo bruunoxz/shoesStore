@@ -1,8 +1,8 @@
-package com.brunohenrique.store.controller;
+package com.brunohenrique.store.controllers;
 
 import com.brunohenrique.store.domain.Shoe;
 import com.brunohenrique.store.dtos.RequestShoe;
-import com.brunohenrique.store.service.ShoeService;
+import com.brunohenrique.store.services.ShoeService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
