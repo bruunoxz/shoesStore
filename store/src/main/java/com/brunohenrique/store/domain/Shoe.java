@@ -27,6 +27,8 @@ public class Shoe {
     @NotNull
     private Double price;
 
+    private Integer size;
+
     public Shoe(RequestShoe requestShoe){
         this.name = requestShoe.name();
         this.description = requestShoe.description();

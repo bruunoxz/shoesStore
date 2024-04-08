@@ -21,7 +21,7 @@ public class ShoeController {
     public ResponseEntity<List<Shoe>> getAllShoes(){return ResponseEntity.ok(shoeService.listAllShoes());}
 
     @GetMapping("/{id}")
-    public ResponseEntity<Optional<Shoe>> getShoeById(@PathVariable String id){return ResponseEntity.ok(shoeService.listShoeById(id));}
+    public ResponseEntity<Shoe> getShoeById(@PathVariable String id){return ResponseEntity.ok(shoeService.listShoeById(id));}
 
     @PostMapping
     public ResponseEntity registerShoe(@RequestBody @Valid RequestShoe data){
@@ -30,11 +30,11 @@ public class ShoeController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Shoe> updateShoe(@PathVariable String id, @RequestBody @Valid RequestShoe data){return ResponseEntity.ok(shoeService.update(data));}
+    public ResponseEntity<Shoe> updateShoe(@PathVariable String id, @RequestBody @Valid RequestShoe data){return ResponseEntity.ok(shoeService.updateShoe(data));}
 
     @DeleteMapping("/{id}")
     public ResponseEntity deleteShoe(@PathVariable String id){
-        shoeService.delete(id);
+        shoeService.deleteShoe(id);
         return ResponseEntity.noContent().build();
     }
 }

@@ -25,19 +25,16 @@ public class ShoeService {
                 .collect(Collectors.toList());
     }
 
-    public Optional<Shoe> listShoeById(String id){
-        return shoeRepository.findById(id);
+    public Shoe listShoeById(String id){
+        return shoeRepository.findById(id).orElseThrow(()-> new DataNotFoundException("Calçado não encontrado"));
     }
 
     public void createShoe(RequestShoe data){
-        if(shoeRepository.findByName(data.name()).isPresent()){
-            throw new DataAlreadyRegistered("Calçado já registrado");
-        }
         Shoe newShoe = new Shoe(data);
         shoeRepository.save(newShoe);
     }
 
-    public Shoe update(RequestShoe data){
+    public Shoe updateShoe(RequestShoe data){
         return shoeRepository.findById(data.id()).
                 map(shoe -> {
                     shoe.setName(data.name());
@@ -48,5 +45,5 @@ public class ShoeService {
                 }).orElseThrow(()->new DataNotFoundException("Calçado não encontrado"));
     }
 
-    public void delete(String id){shoeRepository.deleteById(id);}
+    public void deleteShoe(String id){shoeRepository.deleteById(id);}
 }

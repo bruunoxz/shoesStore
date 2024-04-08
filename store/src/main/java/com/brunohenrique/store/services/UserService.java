@@ -30,21 +30,20 @@ public class UserService {
         return userRepository.findById(id).orElseThrow(()-> new DataNotFoundException("Usuário não encontrado"));
     }
 
-    public void createUser(RequestUser data){
-        Optional<User> optionalEmailUser = userRepository.findByEmail(data.email());
-        if(!(data.email().contains("@"))){
-            throw new InputValidationException("É necessário inserir @ no campo de email");
-        }else if(userRepository.findByEmail(data.email()).isPresent()){
-            throw new DataAlreadyRegistered("Email já registrado");
-        }else if(userRepository.findByDocument(data.document()).isPresent()) {
-            throw new DataAlreadyRegistered("CPF já registrado");
-        }else{
-            User newUser = new User(data);
-            userRepository.save(newUser);
+        public void createUser(RequestUser data){
+            if(!(data.email().contains("@"))){
+                throw new InputValidationException("É necessário inserir @ no campo de email");
+            }else if(userRepository.findByEmail(data.email()).isPresent()){
+                throw new DataAlreadyRegistered("Email já registrado");
+            }else if(userRepository.findByDocument(data.document()).isPresent()) {
+                throw new DataAlreadyRegistered("CPF já registrado");
+            }else{
+                User newUser = new User(data);
+                userRepository.save(newUser);
+            }
         }
-    }
 
-    public User update(RequestUser data){
+    public User updateUser(RequestUser data){
         return userRepository.findById(data.id())
                 .map(user -> {
                     user.setName(data.name());
@@ -56,5 +55,5 @@ public class UserService {
                 .orElseThrow(()->new DataNotFoundException("Usuário não encontrado"));
     }
 
-    public void delete(String id){userRepository.deleteById(id);}
+    public void deleteUser(String id){userRepository.deleteById(id);}
 }
