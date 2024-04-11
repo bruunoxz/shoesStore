@@ -6,7 +6,9 @@ import com.brunohenrique.store.exceptions.DataAlreadyRegistered;
 import com.brunohenrique.store.exceptions.DataNotFoundException;
 import com.brunohenrique.store.exceptions.InputValidationException;
 import com.brunohenrique.store.repositories.UserRepository;
+import com.brunohenrique.store.util.RandomString;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
@@ -19,6 +21,9 @@ public class UserService {
     @Autowired
     UserRepository userRepository;
 
+    @Autowired
+    PasswordEncoder passwordEncoder;
+
     public List<User> listAllUsers(){
         return userRepository.findAll()
                 .stream()
@@ -30,16 +35,21 @@ public class UserService {
         return userRepository.findById(id).orElseThrow(()-> new DataNotFoundException("Usuário não encontrado"));
     }
 
-        public void createUser(RequestUser data){
-            if(!(data.email().contains("@"))){
+        public void createUser(User user){
+            if(!(user.getEmail().contains("@"))){
                 throw new InputValidationException("É necessário inserir @ no campo de email");
-            }else if(userRepository.findByEmail(data.email()).isPresent()){
+            }else if(userRepository.findByEmail(user.getEmail()).isPresent()){
                 throw new DataAlreadyRegistered("Email já registrado");
-            }else if(userRepository.findByDocument(data.document()).isPresent()) {
+            }else if(userRepository.findByDocument(user.getDocument()).isPresent()) {
                 throw new DataAlreadyRegistered("CPF já registrado");
             }else{
-                User newUser = new User(data);
-                userRepository.save(newUser);
+                String encodedPassword = passwordEncoder.encode(user.getPassword());
+                user.setPassword(encodedPassword);
+
+                String randomCode = RandomString.generateRandomString(64);
+                user.setVerificationCode(randomCode);
+                user.setEnabled(false);
+                userRepository.save(user);
             }
         }
 
