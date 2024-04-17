@@ -2,18 +2,19 @@ package com.brunohenrique.store.services;
 
 import com.brunohenrique.store.domain.User;
 import com.brunohenrique.store.dtos.RequestUser;
+import com.brunohenrique.store.dtos.ResponseUser;
 import com.brunohenrique.store.exceptions.DataAlreadyRegistered;
 import com.brunohenrique.store.exceptions.DataNotFoundException;
-import com.brunohenrique.store.exceptions.InputValidationException;
 import com.brunohenrique.store.repositories.UserRepository;
 import com.brunohenrique.store.util.RandomString;
+import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.io.UnsupportedEncodingException;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -23,6 +24,9 @@ public class UserService {
 
     @Autowired
     PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private MailService mailService;
 
     public List<User> listAllUsers(){
         return userRepository.findAll()
@@ -35,10 +39,8 @@ public class UserService {
         return userRepository.findById(id).orElseThrow(()-> new DataNotFoundException("Usuário não encontrado"));
     }
 
-        public void createUser(User user){
-            if(!(user.getEmail().contains("@"))){
-                throw new InputValidationException("É necessário inserir @ no campo de email");
-            }else if(userRepository.findByEmail(user.getEmail()).isPresent()){
+        public ResponseUser createUser(User user) throws MessagingException, UnsupportedEncodingException {
+            if(userRepository.findByEmail(user.getEmail()).isPresent()){
                 throw new DataAlreadyRegistered("Email já registrado");
             }else if(userRepository.findByDocument(user.getDocument()).isPresent()) {
                 throw new DataAlreadyRegistered("CPF já registrado");
@@ -50,6 +52,8 @@ public class UserService {
                 user.setVerificationCode(randomCode);
                 user.setEnabled(false);
                 userRepository.save(user);
+                mailService.sendVerificationEmail(user);
+                return new ResponseUser(user.getId(), user.getName(), user.getEmail(), user.getPassword(), user.getDocument());
             }
         }
 
@@ -66,4 +70,18 @@ public class UserService {
     }
 
     public void deleteUser(String id){userRepository.deleteById(id);}
+
+    public boolean verify(String verificationCode){
+        User user = userRepository.findByVerificationCode(verificationCode);
+
+        if(user == null || user.isEnabled()){
+            return false;
+        }else{
+            user.setVerificationCode(null);
+            user.setEnabled(true);
+            userRepository.save(user);
+
+            return true;
+        }
+    }
 }

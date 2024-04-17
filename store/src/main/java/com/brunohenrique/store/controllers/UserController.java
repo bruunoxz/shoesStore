@@ -2,14 +2,17 @@ package com.brunohenrique.store.controllers;
 
 import com.brunohenrique.store.domain.User;
 import com.brunohenrique.store.dtos.RequestUser;
+import com.brunohenrique.store.dtos.ResponseUser;
 import com.brunohenrique.store.services.UserService;
+import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.UnsupportedEncodingException;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/users")
@@ -23,11 +26,21 @@ public class UserController {
     @GetMapping("/{id}")
     public ResponseEntity<User> getUserById(@PathVariable String id){return ResponseEntity.ok(userService.listUserById(id));}
 
+    @GetMapping("/verify")
+    public String verifyUser(@Param("code")String code){
+        if(userService.verify(code)){
+            return "verify_sucess";
+        }else{
+            return "verify_fail";
+        }
+    }
+
+
     @PostMapping
-    public ResponseEntity registerUser(@RequestBody @Valid RequestUser data){
+    public ResponseEntity<ResponseUser> registerUser(@RequestBody @Valid RequestUser data) throws MessagingException, UnsupportedEncodingException {
         User user = new User(data);
-        userService.createUser(user);
-        return ResponseEntity.ok().build();
+        ResponseUser responseUser = userService.createUser(user);
+        return ResponseEntity.ok().body(responseUser);
     }
 
     @PutMapping("/{id}")
